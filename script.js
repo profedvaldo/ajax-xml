@@ -20,12 +20,12 @@ function buscarXML() {
         for (let i = 0; i < noticias.length; i++) {
             let loc = noticias[i].getElementsByTagName("loc")[0].textContent;
 
-            // Verificação para data de publicação
-            let data_publi_element = noticias[i].getElementsByTagName("news:publication_date")[0];
+            // Verificação para data de publicação sem o namespace "news:"
+            let data_publi_element = noticias[i].getElementsByTagName("publication_date")[0];
             let data_publi = data_publi_element ? data_publi_element.textContent : 'Data não disponível';
 
-            // Verificação para o título
-            let titulo_element = noticias[i].getElementsByTagName("news:title")[0];
+            // Verificação para o título sem o namespace "news:"
+            let titulo_element = noticias[i].getElementsByTagName("title")[0];
             let titulo = titulo_element ? titulo_element.textContent : 'Título não disponível';
 
             // Usar crases para interpolação de variáveis
