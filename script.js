@@ -1,43 +1,48 @@
-//javascript para carregar as ultimas noticias
-
-//endereço do xml
+// Endereço do XML
 const xmlURL = 'sitemap-news.xml';
 
-//função pra buscar o xml
+// Função para buscar o XML
 function buscarXML() {
     fetch(xmlURL)
     .then(response => response.text())
     .then(data => {
-        //aqui vamos converter o texto em DOM
+        // Converter o texto em DOM
         let parser = new DOMParser();
         let xml = parser.parseFromString(data, "application/xml");
         
-        //agora vamos extrair os dados desejados (exemplo URL da noticias)
+        // Extrair os dados desejados (exemplo URL das notícias)
         let noticias = xml.getElementsByTagName("url");
-        //elemento (no html) onde vou exibir as noticias
+        // Elemento onde vou exibir as notícias
         let manchetesContainer = document.getElementById("manchetes");
-        manchetesContainer.innerHTML = ""; //limpa o elemento
+        manchetesContainer.innerHTML = ""; // Limpa o elemento
 
-        //percorrer as noticias usando um for
+        // Percorrer as notícias usando um for
         for (let i = 0; i < noticias.length; i++) {
             let loc = noticias[i].getElementsByTagName("loc")[0].textContent;
-            let data_publi = 
-            noticias[i].getElementsByTagName("news:publication_date")[0].textContent;
-            let titulo = noticias[i].getElementsByTagName("news:title")[0].textContent;
+
+            // Verificação para data de publicação
+            let data_publi_element = noticias[i].getElementsByTagName("news:publication_date")[0];
+            let data_publi = data_publi_element ? data_publi_element.textContent : 'Data não disponível';
+
+            // Verificação para o título
+            let titulo_element = noticias[i].getElementsByTagName("news:title")[0];
+            let titulo = titulo_element ? titulo_element.textContent : 'Título não disponível';
 
             // Usar crases para interpolação de variáveis
             let montadiv = `
                 <div class='noticias'>
                     <h2>${titulo}</h2>
-                    <a href='${loc}'>leia mais</a>
+                    <p>Publicado em: ${data_publi}</p>
+                    <a href='${loc}' target='_blank'>Leia mais</a>
                 </div>
                 <hr/>
             `;
             manchetesContainer.innerHTML += montadiv;
         }
     }).catch(error => {
-        console.error('Erro ao carregar o xml', error);
+        console.error('Erro ao carregar o XML:', error);
     });
 }
 
-window.onload = buscarXML; //atualiza ao carregar a pagina
+// Chama a função quando a página for carregada
+window.onload = buscarXML;
