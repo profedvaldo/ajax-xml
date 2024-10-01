@@ -1,42 +1,48 @@
-//endereço
-const xmlURL = 'sitemap.xml';
+// Endereço do XML
+const xmlURL = 'sitemap-news.xml';
 
-function buscarXML(){
+// Função para buscar o XML
+function buscarXML() {
     fetch(xmlURL)
     .then(response => response.text())
     .then(data => {
-        //converter texto em DOM
+        // Converter o texto em DOM
         let parser = new DOMParser();
         let xml = parser.parseFromString(data, "application/xml");
-        //extrair os dados desejados
+        
+        // Extrair os dados desejados (exemplo URL das notícias)
         let noticias = xml.getElementsByTagName("url");
-        //elemento para  exibir as noticias
+        // Elemento onde vou exibir as notícias
         let manchetesContainer = document.getElementById("manchetes");
-        manchetesContainer.innerHTML = ""; //limpa a div
+        manchetesContainer.innerHTML = ""; // Limpa o elemento
 
-        //vamos percorrer a lista usando for
-        for (let i = 0; i < noticias.length; i++){
+        // Percorrer as notícias usando um for
+        for (let i = 0; i < noticias.length; i++) {
             let loc = noticias[i].getElementsByTagName("loc")[0].textContent;
 
-            //extrai a data de public.
+            // Verificação para data de publicação sem o namespace "news:"
             let data_publi_element = noticias[i].getElementsByTagName("publication_date")[0];
-            let data_publi = data_publi_element ? data_publi_element.textContent : 'data indisp.';
-            //verifica o titulo
-            let titulo_element = noticias[i].getElementsByTagName("title")[0];
-            let titulo = titulo_element ? titulo_element.textContent : 'titulo_indisponivel';
+            let data_publi = data_publi_element ? data_publi_element.textContent : 'Data não disponível';
 
-            //interpolação de variaveis
+            // Verificação para o título sem o namespace "news:"
+            let titulo_element = noticias[i].getElementsByTagName("title")[0];
+            let titulo = titulo_element ? titulo_element.textContent : 'Título não disponível';
+
+            // Usar crases para interpolação de variáveis
             let montadiv = `
-            <div class = 'noticias'> 
-                <h2>${titulo}</h2>
-                <p>publicado em> ${data_publi}</p>
-                <a href='${loc}' target='_blank'>
-                leia mais</a><hr>
+                <div class='noticias'>
+                    <h2>${titulo}</h2>
+                    <p>Publicado em: ${data_publi}</p>
+                    <a href='${loc}' target='_blank'>Leia mais</a>
+                </div>
+                <hr/>
             `;
             manchetesContainer.innerHTML += montadiv;
         }
     }).catch(error => {
-        console.error('erro ao carregar o xml', error);
+        console.error('Erro ao carregar o XML:', error);
     });
 }
+
+// Chama a função quando a página for carregada
 window.onload = buscarXML;
